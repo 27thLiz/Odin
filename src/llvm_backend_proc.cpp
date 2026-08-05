@@ -186,6 +186,10 @@ gb_internal lbProcedure *lb_create_procedure(lbModule *m, Entity *entity, bool i
 	lb_ensure_abi_function_type(m, p);
 	lb_add_function_type_attributes(p->value, p->abi_function_type, p->abi_function_type->calling_convention);
 
+	if (build_context.no_omit_frame_pointer) {
+		lb_add_attribute_to_proc_with_string(m, p->value, str_lit("frame-pointer"), str_lit("all"));
+	}
+
 	if (build_context.no_plt) {
 		lb_add_attribute_to_proc(m, p->value, "nonlazybind");
 	}
@@ -508,6 +512,10 @@ gb_internal lbProcedure *lb_create_dummy_procedure(lbModule *m, String link_name
 	LLVMTypeRef func_type = lb_get_procedure_raw_type(m, p->type);
 
 	p->value = LLVMAddFunction(m->mod, c_link_name, func_type);
+
+	if (build_context.no_omit_frame_pointer) {
+		lb_add_attribute_to_proc_with_string(m, p->value, str_lit("frame-pointer"), str_lit("all"));
+	}
 
 	Type *pt = p->type;
 	LLVMSetFunctionCallConv(p->value, lb_calling_convention_kind(pt->Proc.calling_convention));

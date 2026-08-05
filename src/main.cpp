@@ -480,6 +480,7 @@ enum BuildFlagKind {
 	BuildFlag_RelocMode,
 	BuildFlag_StackProtector,
 	BuildFlag_DisableRedZone,
+	BuildFlag_NoOmitFramePointer,
 
 	BuildFlag_DisableUnwind,
 
@@ -760,6 +761,7 @@ gb_internal bool parse_build_flags(Array<String> args) {
 	add_flag(&build_flags, BuildFlag_RelocMode,               str_lit("reloc-mode"),                BuildFlagParam_String,  Command__does_build);
 	add_flag(&build_flags, BuildFlag_StackProtector,          str_lit("stack-protector"),           BuildFlagParam_String,  Command__does_build);
 	add_flag(&build_flags, BuildFlag_DisableRedZone,          str_lit("disable-red-zone"),          BuildFlagParam_None,    Command__does_build);
+	add_flag(&build_flags, BuildFlag_NoOmitFramePointer,      str_lit("no-omit-frame-pointer"),      BuildFlagParam_None,    Command__does_build);
 
 	add_flag(&build_flags, BuildFlag_DisableUnwind,           str_lit("disable-unwind"),          BuildFlagParam_None,    Command__does_build);
 
@@ -1689,6 +1691,9 @@ gb_internal bool parse_build_flags(Array<String> args) {
 						}
 						case BuildFlag_DisableRedZone:
 							build_context.disable_red_zone = true;
+							break;
+						case BuildFlag_NoOmitFramePointer:
+							build_context.no_omit_frame_pointer = true;
 							break;
 						case BuildFlag_DisableUnwind:
 							build_context.disable_unwind = true;
@@ -3391,6 +3396,10 @@ gb_internal int print_show_help(String const arg0, String command, String option
 	}
 
 	if (run_or_build) {
+		if (print_flag("-no-omit-frame-pointer")) {
+			print_usage_line(2, "Prevents frame pointer omission in all generated procedures.");
+		}
+
 		if (print_flag("-no-rpath")) {
 			print_usage_line(2, "Disables automatic addition of an rpath linked to the executable directory.");
 		}
