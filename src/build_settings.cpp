@@ -614,6 +614,7 @@ struct BuildContext {
 	StackProtector stack_protector;
 
 	bool   disable_red_zone;
+	bool   no_omit_frame_pointer;
 	bool   disable_unwind;
 	bool   no_plt;
 
